@@ -25,9 +25,12 @@
 ;; Views
 
 (defn home-page []
-  [:div [:h2 @state]
-   [:br]
-   [:button {:class "btn btn-default" :on-click (fn [e] (reset! state (gen-name)))} "Luo uusi"]])
+  [:div.jumbotron
+    [:div [:h2 @state]
+     [:br]
+     [:button 
+      {:class "btn btn-info" :on-click (fn [e] (reset! state (gen-name)))} 
+      "Luo uusi"]]])
 
 ;; -------------------------
 ;; Initialize app
