@@ -43,10 +43,6 @@
 ;; -------------------------
 ;; Event dispatch
 
-(defn generate-random-name
-  []
-  (rf/dispatch [:text (gen-name!)]))
-
 
 ;; -------------------------
 ;; Event handlers
@@ -78,8 +74,7 @@
 
 (defn button []
   [:button
-  {:class "btn btn-info"
-   ;:on-click (fn [e] (reset! state (gen-name!)))} "Luo uusi"])
+  {:class "btn btn-outline-info"
    :on-click #(rf/dispatch [:change-text (gen-prob-name!)])}
   "Luo uusi!"])
 
