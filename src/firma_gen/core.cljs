@@ -4,6 +4,8 @@
               [firma-gen.data :as d]
               [re-frame.core :as rf]))
 
+(def log (.-log js/console))
+
 ;; -------------------------
 ;; Logic
 
@@ -50,12 +52,20 @@
 (rf/reg-event-db
   :initialize
   (fn [_ _]
-    {:text "Tämä on firmanimigeneraattori. Paina nappia!"}))
+    {:text "Tämä on firmanimigeneraattori. Paina nappia!"
+     :gen-f gen-prob-name!}))
 
 (rf/reg-event-db
   :change-text
   (fn [db [_ new-text]]
     (assoc db :text new-text)))
+
+(rf/reg-event-db
+  :toggle-function
+  (fn [db _]
+    (if (= gen-prob-name! (:gen-f db))
+      (assoc db :gen-f gen-name!)
+      (assoc db :gen-f gen-prob-name!))))
 
 ;; -------------------------
 ;; Query
@@ -65,6 +75,11 @@
   (fn [db _]
     (:text db)))
 
+(rf/reg-sub
+  :gen-f
+  (fn [db _]
+    (:gen-f db)))
+
 ;; -------------------------
 ;; View functions
 
@@ -72,10 +87,10 @@
   ;[:h2 @state])
   [:h2 @(rf/subscribe [:text])])
 
-(defn button []
+(defn button [gen-f]
   [:button
   {:class "btn btn-outline-info"
-   :on-click #(rf/dispatch [:change-text (gen-prob-name!)])}
+   :on-click #(rf/dispatch [:change-text (gen-f)])}
   "Luo uusi!"])
 
 (defn ui []
@@ -83,7 +98,16 @@
     [:div
      [text]
      [:br]
-     [button]]])
+      [:div {:class "col-auto"}
+       [:label {:class "custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0"}
+        [:input {:type "checkbox"
+                 :class "custom-control-input"
+                 :on-change #(rf/dispatch [:toggle-function])}]
+        [:span {:class "custom-control-indicator"}]
+        [:span {:class "custom-control-description"}] "Satunnainen"]
+       ]]
+     [:br]
+     [button @(rf/subscribe [:gen-f])]])
 
 ;; -------------------------
 ;; Initialize app
