@@ -5,11 +5,11 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.495" :scope "provided"]
-                 [reagent "0.6.1"]
+                 [org.clojure/clojurescript "1.9.908" :scope "provided"]
+                 [reagent "0.7.0"]
                  [re-frame "0.10.1"]]
 
-  :plugins [[lein-cljsbuild "1.1.5"]
+  :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.9"]]
 
   :min-lein-version "2.5.0"
@@ -44,7 +44,7 @@
                         {:output-to "public/js/app.js"
                          :output-dir "public/js/release"
                          :asset-path   "js/out"
-                         :optimizations :advanced
+                         :optimizations :whitespace
                          :pretty-print false}}}}
 
   :aliases {"release" ["do" "clean" ["cljsbuild" "once" "release"]]}
