@@ -38,43 +38,64 @@
   (let [rand-floats (take 6 (repeatedly #(rand)))]
     (s/capitalize (s/join (map pick-char d/trans-table rand-floats)))))
 
-;; -------------------------
-;; State
-
-(def state (r/atom "Tämä on firmanimigeneraattori. Paina nappia!"))
-
 ;; Re-frame stuff
 
 ;; -------------------------
 ;; Event dispatch
 
+(defn generate-random-name
+  []
+  (rf/dispatch [:text (gen-name!)]))
+
 
 ;; -------------------------
 ;; Event handlers
 
+(rf/reg-event-db
+  :initialize
+  (fn [_ _]
+    {:text "Tämä on firmanimigeneraattori. Paina nappia!"}))
+
+(rf/reg-event-db
+  :change-text
+  (fn [db [_ new-text]]
+    (assoc db :text new-text)))
+
 ;; -------------------------
 ;; Query
+
+(rf/reg-sub
+  :text
+  (fn [db _]
+    (:text db)))
 
 ;; -------------------------
 ;; View functions
 
+(defn text []
+  ;[:h2 @state])
+  [:h2 @(rf/subscribe [:text])])
 
-;; -------------------------
-;; Views
+(defn button []
+  [:button
+  {:class "btn btn-info"
+   ;:on-click (fn [e] (reset! state (gen-name!)))} "Luo uusi"])
+   :on-click #(rf/dispatch [:change-text (gen-prob-name!)])}
+  "Luo uusi!"])
 
-(defn home-page []
+(defn ui []
   [:div.jumbotron
-    [:div [:h2 @state]
+    [:div
+     [text]
      [:br]
-     [:button
-      {:class "btn btn-info" :on-click (fn [e] (reset! state (gen-name!)))}
-      "Luo uusi"]]])
+     [button]]])
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-root []
-  (r/render [home-page] (.getElementById js/document "app")))
+  (rf/dispatch-sync [:initialize])
+  (r/render [ui] (.getElementById js/document "app")))
 
 (defn init! []
   (mount-root))
